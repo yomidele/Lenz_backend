@@ -1,33 +1,23 @@
-# ─────────────────────────────────────────────
-# LENS Backend Dockerfile
-# Python 3.11 + InsightFace + FFmpeg
-# ─────────────────────────────────────────────
-
 FROM python:3.11-slim
 
-# Install system dependencies
+# Fixed package names for Debian Trixie
 RUN apt-get update && apt-get install -y \
     ffmpeg \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
-    libxrender-dev \
+    libxrender1 \
     libgomp1 \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
 COPY . .
-
-# InsightFace will download buffalo_l model on first run
-# It gets cached in the volume defined in docker-compose.yml
 
 EXPOSE 8000
 
