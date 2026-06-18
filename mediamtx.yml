@@ -1,0 +1,32 @@
+# ─────────────────────────────────────────────
+# MediaMTX Configuration for LENS
+# Save as mediamtx.yml next to your docker-compose.yml
+# ─────────────────────────────────────────────
+
+# RTMP — cameras push streams here
+rtmpAddress: :1935
+
+# HLS — browser reads streams here
+hlsAddress: :8888
+hlsAlwaysRemux: yes
+hlsSegmentCount: 3
+hlsSegmentDuration: 1s
+hlsPartDuration: 200ms
+
+# WebRTC — alternative browser viewing
+webrtcAddress: :8889
+
+# RTSP — optional
+rtspAddress: :8554
+
+# Management API
+api: yes
+apiAddress: :9997
+
+# Allow any camera to push without authentication
+# (Add auth below for production)
+paths:
+  "~.*":
+    # Any RTMP stream will be accepted automatically
+    # Camera pushes to: rtmp://YOUR_SERVER:1935/CAMERA_NAME
+    # Browser views at: http://YOUR_SERVER:8888/CAMERA_NAME/index.m3u8

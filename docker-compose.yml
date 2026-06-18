@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  # ─────────────────────────────────────────────
+  # MEDIA SERVER — receives RTMP, serves HLS
+  # ─────────────────────────────────────────────
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: lens_mediamtx
+    network_mode: host
+    volumes:
+      - ./mediamtx.yml:/mediamtx.yml
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # BACKEND — Python FastAPI + InsightFace
+  # ─────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lens_backend
+    network_mode: host
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - MEDIAMTX_HOST=localhost
+      - MEDIAMTX_RTMP_PORT=1935
+      - MEDIAMTX_HLS_PORT=8888
+    volumes:
+      - insightface_models:/root/.insightface  # cache downloaded models
+    depends_on:
+      - mediamtx
+    restart: unless-stopped
+
+volumes:
+  insightface_models:
